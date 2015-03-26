@@ -1,0 +1,254 @@
+#!/bin/bash
+
+####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF14_WORK_ORDERS.sh																			
+#	Author's Name: Erwin Ramos																						
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF14																								
+#	Description: Unix script for LF14-Work Order Supplies.															
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Erwin Ramos		Initial Development													
+#																													
+#																														
+####################################################################################################################
+
+
+## SET VARIABLE
+home="/home/nbtydata";
+tempDIR="/home/nbtydata/incoming";
+WORKORDER="XXNBTY_SUPPLIES_WO";
+WorkOrderTempDIR=$XXNBTY_TOP/data/tmp;
+SupplyWOBackUp="/home/nbtydata/VCP_RICEFW/archive/WORKORDER_BCK";
+SupplyWOBckOrig="/home/nbtydata/VCP_RICEFW/archive/WORKORDER_ORIG_FLATFILE_BCK";
+dataUploadDIR="/home/nbtydata/dataupload";
+fileArch=$XXNBTY_TOP/data/in/arch;
+v_date=`date "+%Y-%m-%d_%H:%M"`;
+
+## Deletion of temporary files in the temp directory
+cd $WorkOrderTempDIR
+
+rm -f parse*
+rm -f XXNBTY_SUPPLIES_WO*
+rm -f SUPPLIES_WO*
+rm -f WorkOrder*
+
+
+## Moving of flat file into temporary directory for transformation.
+cd $tempDIR
+
+mv $WORKORDER* $WorkOrderTempDIR
+
+
+## Archiving of Original flat file. 
+cd $WorkOrderTempDIR
+#cp $WORKORDER* $fileArch
+
+
+cat $WORKORDER* > SUPPLIES_WO.txt
+	
+## Pre-validation checking of columns of the flat file. 
+
+N=0
+
+	cat SUPPLIES_WO.txt | while read LINE1; do
+        	N1=$((N1+1))
+		c1=`echo $LINE1 | awk -F '~' '{print $1}'`;
+
+       		if [ $c1 =  ]; then
+                	echo $LINE1 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse1.txt
+        	else
+                	echo $LINE1 >> parse1.txt
+       	 	continue
+                	exit 0
+        	fi
+	done
+
+
+	cat parse1.txt | while read LINE2; do
+        	N2=$((N2+1))
+        	c2=`echo $LINE2 | awk -F '~' '{print $2}'`;
+
+        	if [ $c2 =  ]; then
+                	echo $LINE2 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse2.txt
+        	else
+                	echo $LINE2 >> parse2.txt
+        	continue
+                	exit 0
+        	fi
+	done
+
+
+	cat parse2.txt | while read LINE3; do
+        	N3=$((N3+1))
+        	c3=`echo $LINE3 | awk -F '~' '{print $3}'`;
+
+        	if [ $c3 =  ]; then
+                	echo $LINE3 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse3.txt
+        	else
+                	echo $LINE3 >> parse3.txt
+        	continue
+        	fi
+	done
+
+
+	cat parse3.txt | while read LINE4; do
+        	N4=$((N4+1))
+        	c4=`echo $LINE4 | awk -F '~' '{print $4}'`;
+
+        	if [ $c4 =  ]; then
+                	echo $LINE4 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse4.txt
+        	else
+                	echo $LINE4 >> parse4.txt
+        	continue
+        	fi
+	done
+
+
+	cat parse4.txt | while read LINE5; do
+		N5=$((N5+1))
+		c5=`echo $LINE5 | awk -F '~' '{print $5}'`;
+
+		if [ $c5 =  ]; then
+			echo $LINE5 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse5.txt
+		else 
+
+			echo $LINE5 >> parse5.txt
+
+		continue
+		fi
+	done
+
+
+	cat parse5.txt | while read LINE6; do
+       		N6=$((N6+1))
+		c6=`echo $LINE6 | awk -F '~' '{print $6}'`;
+
+		if [ $c6 =  ]; then
+		        echo $LINE6 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse6.txt
+        	else
+        		echo $LINE6 >> parse6.txt
+
+        	continue
+        	fi
+
+	done
+
+        cat parse6.txt | while read LINE7; do
+                N7=$((N7+1))
+                c7=`echo $LINE7 | awk -F '~' '{print $7}'`;
+
+                if [ $c7 =  ]; then
+                        echo $LINE7 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7}' >> parse7.txt
+                else
+                        echo $LINE7 >> parse7.txt
+
+                continue
+                fi
+
+        done
+
+tr -d '\r' < parse7.txt > WorkOrder.txt
+		
+## Flat file transformation based on control file mapping.
+## Sequence of columns in the transformation separated by tilde (~): 
+# ITEM_NAME,
+# ORGANIZATION_CODE,
+# NEW_SCHEDULE_DATE,
+# FIRM_PLANNED_TYPE,
+# WIP_ENTITY_NAME,
+# SR_INSTANCE_CODE,
+# REVISION,
+# UNIT_NUMBER,
+# NEW_WIP_START_DATE DATE,
+# NEW_ORDER_QUANTITY,
+# ALTERNATE_BOM_DESIGNATOR,
+# ALTERNATE_ROUTING_DESIGNATOR,
+# LINE_CODE,
+# PROJECT_NUMBER,
+# TASK_NUMBER,
+# PLANNING_GROUP,
+# SCHEDULE_GROUP_NAME,
+# BUILD_SEQUENCE,
+# WO_LATENESS_COST,
+# IMPLEMENT_PROCESSING_DAYS,
+# LATE_SUPPLY_DATE DATE,
+# LATE_SUPPLY_QTY,
+# QTY_SCRAPPED,
+# QTY_COMPLETED,
+# WIP_STATUS_CODE,
+# BILL_NAME,
+# ROUTING_NAME,
+# DELETED_FLAG,
+# COMPANY_NAME,
+# COPRODUCTS_SUPPLY,
+# ORDER_TYPE,
+# QUANTITY_PER_ASSEMBLY,
+# QUANTITY_ISSUED,
+# WIP_START_QUANTITY,
+# OPERATION_SEQ_CODE,
+# EFFECTIVITY_DATE DATE,
+# JOB_OP_SEQ_CODE,
+# JUMP_OP_SEQ_CODE,
+# JUMP_OP_EFFECTIVITY_DATE,
+# SOURCE_ORGANIZATION_ID,
+# SOURCE_INVENTORY_ITEM_ID,
+# SOURCE_PROJECT_ID,
+# SOURCE_TASK_ID,
+# SOURCE_SR_MTL_SUPPLY_ID,
+# SOURCE_DISPOSITION_ID,
+# SOURCE_BILL_SEQUENCE_ID ,
+# SOURCE_ROUTING_SEQUENCE_ID ,
+# SOURCE_SCHEDULE_GROUP_ID ,
+# SOURCE_WIP_ENTITY_ID ,
+# ACTUAL_START_DATE,
+# SR_INSTANCE_ID CONSTANT,
+# PROCESS_FLAG CONSTANT,
+# DATA_SOURCE_TYPE CONSTANT,
+# LAST_UPDATE_LOGIN CONSTANT,
+# LAST_UPDATE_DATE SYSDATE,
+# CREATION_DATE SYSDATE
+
+## 02-02-2015: Default value for FIRM_PLANNED_TYPE column has been changed into 1 to addressed the change request #80.
+
+cat WorkOrder.txt | awk -F '~' '{print $1"~"$2"~"$6"~1~"$3"~EBS~~~"$4"~"$5"~~~~~~~~~~~~~~"$7"~~~~2~~~3~~~~~~~~~~~~~~~~~~~~~1~~~~"}' >> parse_suppliesWO.dat
+#cat parse1.txt > XXNBTY_ON_HAND_DATA.dat 
+
+cat parse_suppliesWO.dat | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > MSC_ST_SUPPLIES_WO.dat
+
+## Converting the enriched flat file from unix to dos format. 
+unix2dos MSC_ST_SUPPLIES_WO.dat
+
+chmod 777 MSC_ST_SUPPLIES_WO.dat
+
+## creating back up file for enriched file
+cat MSC_ST_SUPPLIES_WO.dat > MSC_ST_SUPPLIES_WO_BCK_$v_date.dat
+
+#Archiving Original flat file and enriched flat file
+mv MSC_ST_SUPPLIES_WO_BCK_* $fileArch
+
+mv $WORKORDER* $fileArch
+
+## moving transformed flat file to the ASCP Directory
+mv MSC_ST_SUPPLIES_WO.dat $dataUploadDIR
+
+## Deletion of temporary files in the temp directory
+cd $WorkOrderTempDIR
+
+rm -f parse*
+rm -f XXNBTY_SUPPLIES_WO*
+rm -f SUPPLIES_WO*
+rm -f WorkOrder*
+
+
+
+
+
+
+
+

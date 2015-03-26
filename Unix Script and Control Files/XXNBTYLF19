@@ -1,0 +1,51 @@
+#!/bin/bash
+
+####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF19_ITEM_COST.sh																			
+#	Author's Name: Ronald Villavieja																				
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF19																								
+#	Description: Unix script for LF19-On Hand Supplies.																
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Ronald Villavieja		Initial Development											
+#																													
+#																														
+####################################################################################################################
+
+v_suffx=`date "+%Y-%m-%d_%H%M"`; 
+fileLoc="/home/nbtydata/incoming";
+fileArch=$XXNBTY_TOP/data/in/arch;
+fileTemp="/home/nbtydata/dataupload";
+
+cd $fileTemp 
+rm XXNBTY_COST.dat
+
+##Convert flat file from dos to unix format.
+cd $fileLoc
+dos2unix XXNBTY_COST*
+
+##Create working file
+> $fileTemp/XXNBTY_COST.dat
+
+grep "" /dev/null XXNBTY_COST* > $fileTemp/XXNBTY_COST.dat
+
+
+## Archive original flat file and create backup
+
+mv /home/nbtydata/incoming/XXNBTY_COST* $fileArch
+
+cd $fileTemp
+chmod 777 XXNBTY_COST.dat
+
+cp XXNBTY_COST.dat XXNBTY_COST_$v_suffx.dat
+
+mv XXNBTY_COST_$v_suffx.dat $fileArch
+
+
+exit 0

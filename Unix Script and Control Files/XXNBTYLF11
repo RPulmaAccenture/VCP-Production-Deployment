@@ -1,0 +1,161 @@
+#!/bin/bash
+
+
+####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF11_IN_TRANSIT.sh																			
+#	Author's Name: Erwin Ramos																						
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF11																								
+#	Description: Unix script for LF11-In Transit Supplies.															
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Erwin Ramos		Initial Development													
+#																													
+#																													
+####################################################################################################################
+
+## SET VARIABLE
+home="/home/nbtydata";
+tempDIR="/home/nbtydata/incoming";
+INTRANSIT="XXNBTY_SUPPLIES_IN_TRANSIT";
+InTransitTempDIR=$XXNBTY_TOP/data/tmp;
+#InTransitBackUp="/home/nbtydata/VCP_RICEFW/archive/INTRANSIT_BCK";
+#InTransitOrigBCK="/home/nbtydata/VCP_RICEFW/archive/INTRANSIT_ORIG_FLATFILE_BCK";
+dataUploadDIR="/home/nbtydata/dataupload";
+fileArch=$XXNBTY_TOP/data/in/arch;
+v_date=`date "+%Y-%m-%d_%H:%M"`;
+
+## Deletion of temporary files in temp directory.
+cd $InTransitTempDIR
+rm -f transit*
+rm -f XXNBTY_SUPPLIES_IN_TRANSIT*
+rm -f InTransit*
+rm -f MSC_ST_SUPPLIES_*
+
+
+## Moving of flat file into temporary directory for transformation.
+cd $tempDIR
+mv $INTRANSIT* $InTransitTempDIR
+
+## Archiving of Original flat file. 
+
+cd $InTransitTempDIR
+#cp $INTRANSIT* $InTransitOrigBCK
+cat $INTRANSIT* > InTransit_File.txt
+
+NT=0
+
+cat InTransit_File.txt | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10"~"$11"~"$12"~"$13}' >> transit1.txt
+
+
+## DEC-24-2015: comment the code to simplify the transformation. 
+
+#	cat InTransit_File.txt | while read LINE_T1; do
+#		NT1=$((NT1+1))
+#               ct1=`echo $LINE_T1 | awk -F '~' '{print $1}'`;
+
+#                if [ $ct1 =  ]; then
+#                        echo $LINE_T1 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10"~"$11"~"$12"~"$13}' >> transit1.txt
+#                else
+#                        echo $LINE_T1 >> transit1.txt
+#               continue
+#                        exit 0
+#                fi
+#        done
+
+
+	#Number increment for PURCH LINE Col 11 in flat file. 
+	#cat transit10.txt | while read LINE_T11; do
+    #            NT11=$((NT11+1))
+    #            #ct11=`echo $LINE_T11 | awk -F '~' '{print $1}'`;
+    #           PU8=`echo $LINE_T11 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10"~"$11"~"$12"~"$13}'`;
+
+
+
+    #            awk -F '~' "BEGIN{print \"$PU8~$NT11\" }" >> transit12.txt
+
+    #    done
+#tr -d '\r' < transit12.txt > InTransit.txt
+
+##Delete all extra spaces in the flat file. 
+cat transit1.txt | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > transit2.txt
+
+tr -d '\r' < transit2.txt > InTransit.txt
+
+
+## Flat file transformation based on control file mapping. 
+## Sequence of columns in the transformation separated by tilde (~): 
+# ITEM_NAME,
+# ORGANIZATION_CODE,
+# NEW_SCHEDULE_DATE,
+# ORDER_TYPE,
+# FIRM_PLANNED_TYPE,
+# SR_INSTANCE_CODE,
+# REVISION,
+# UNIT_NUMBER,
+# SUPPLIER_NAME,
+# NEW_ORDER_QUANTITY,
+# PURCH_LINE_NUM,
+# SOURCE_SR_INSTANCE_CODE,
+# NEW_DOCK_DATE DATE,
+# PROJECT_NUMBER,
+# TASK_NUMBER,
+# PLANNING_GROUP,
+# ORDER_NUMBER,
+# DELIVERY_PRICE,
+# QTY_SCRAPPED,
+# FROM_ORGANIZATION_CODE,
+# DELETED_FLAG,
+# COMPANY_NAME,
+# SUPPLIER_SITE_CODE,
+# SUBINVENTORY_CODE,
+# SOURCE_ORG_ID,
+# SOURCE_INVENTORY_ITEM_ID,
+# SOURCE_VENDOR_ID,
+# SOURCE_VENDOR_SITE_ID,
+# SOURCE_PROJECT_ID,
+# SOURCE_TASK_ID,
+# SOURCE_FROM_ORGANIZATION_ID,
+# SOURCE_SR_MTL_SUPPLY_ID,
+# SOURCE_DISPOSITION_ID,
+# SR_INSTANCE_ID CONSTANT,
+# PROCESS_FLAG CONSTANT '1',
+# DATA_SOURCE_TYPE CONSTANT,
+# LAST_UPDATE_LOGIN CONSTANT,
+# LAST_UPDATE_DATE SYSDATE,
+# CREATION_DATE SYSDATE
+
+
+## 02-02-2015: Default value for FIRM_PLANNED_TYPE column has been changed into 1 to addressed the change request #80.
+
+cat InTransit.txt | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~1~EBS~"$5"~~"$12"~"$6"~"$11"~EBS~"$7"~~~~"$8"~~~"$9"~~~"$13"~"$10"~~~~~~~~~~~~~~~"}' >> MSC_ST_SUPPLIES_INTRANSIT.dat
+
+#cat transit_file.dat | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > MSC_ST_SUPPLIES_INTRANSIT.dat
+
+## Converting the enriched flat file from unix to dos format. 
+unix2dos MSC_ST_SUPPLIES_INTRANSIT.dat
+
+chmod 777 MSC_ST_SUPPLIES_INTRANSIT.dat
+
+## creating back up file for enriched file
+cat MSC_ST_SUPPLIES_INTRANSIT.dat > MSC_ST_SUPPLIES_INTRANSIT_BACK_$v_date.dat
+
+#Archiving Original flat file and enriched flat file
+mv MSC_ST_SUPPLIES_INTRANSIT_BACK* $fileArch
+mv $INTRANSIT* $fileArch
+
+## moving enriched flat file to the ASCP Directory
+mv MSC_ST_SUPPLIES_INTRANSIT.dat $dataUploadDIR
+
+## Deletion of temporary files in temp directory.
+cd $InTransitTempDIR
+rm -f transit*
+rm -f XXNBTY_SUPPLIES_IN_TRANSIT*
+rm -f InTransit*
+
+

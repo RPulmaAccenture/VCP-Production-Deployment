@@ -1,0 +1,14 @@
+ Maintenance History:
+  Date         Version#  Name         		Remarks
+  -----------  ------  -----------------	------------------------------------------------
+  02-Mar-2015	1.0	Erwin Ramos		Initial creation
+  03-Mar-2015	1.01	Erwin Ramos		Updated the following packages:
+						XXNBTY_VCP_SEND_EMAIL_PKG.pkb
+						XXNBTY_MSC_EXT05_SAFETY_STK_PKG.pkb
+						XXNBTY_MSC_EXT03_SPREAD_EXT_PKG.pkb
+  03-Mar-2015	1.02	Erwin Ramos		Updated the following:
+						XXNBTY_MSC_EXT03_SPREAD_EXT_PKG.pkb
+						VCP_batch_deployment.sh
+
+  11-Mar-2015	1.03	Erwin Ramos		Updated the XXNBTY_MSC_EXT05_SAFETY_STK_PKG.pks change the xxnbty_safety_stg_tbl to xxnbty_msc_safety_stocks_st
+

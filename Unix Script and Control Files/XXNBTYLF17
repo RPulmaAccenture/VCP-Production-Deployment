@@ -1,0 +1,164 @@
+#!/bin/bash
+
+
+####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF17_SALES_ORDER.sh																			
+#	Author's Name: Erwin Ramos																						
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF17																								
+#	Description: Unix script for LF17-Sales Order.																	
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Erwin Ramos		Initial Development													
+#																													
+#																													
+####################################################################################################################
+
+## SET VARIABLE
+home="/home/nbtydata";
+tempDIR="/home/nbtydata/incoming";
+dataUploadDIR="/home/nbtydata/dataupload";
+SalesWOBackUp="/home/nbtydata/VCP_RICEFW/archive/SALESORDER_BCK";
+SalesWOBackUpOrig="/home/nbtydata/VCP_RICEFW/archive/SALESORDER_ORIG_FLATFILE_BCK";
+SALESORDER="XXNBTY_SALES_ORDERS";
+SALESORDERTempDIR=$XXNBTY_TOP/data/tmp;
+fileArch=$XXNBTY_TOP/data/in/arch;
+v_date=`date "+%Y-%m-%d_%H:%M"`;
+
+## Deletion of temporary files in the temp directory
+cd $SALESORDERTempDIR
+rm -f parse*
+rm -f XXNBTY_SALES*
+rm -f Sales_order*
+rm -f SalesOrde*
+
+
+## Moving of flat file into temporary directory for transformation.
+cd $tempDIR #Flatfile directory
+
+mv $SALESORDER* $SALESORDERTempDIR
+
+
+cd $SALESORDERTempDIR
+
+#cp $SALESORDER* $fileArch
+
+cat $SALESORDER* > Sales_order.txt
+
+#rm parse.txt
+N=0
+
+###COLUMN VALIDATION
+        cat Sales_order.txt | while read LINE15; do
+                N15=$((N1+1))
+                c15=`echo $LINE1 | awk -F '~' '{print $15}'`;
+
+                if [ $c15 =  ]; then
+                        echo $LINE15 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10"~"$11"~"$12"~"$13"~"$14"~"$15"~"$16"~"$17"~"$18"~"$19"~"$20"~"$21"~"$22"~"$23"~"$24}' >> parse15.txt
+                else
+                        echo $LINE15 >> parse15.txt
+                continue
+                        exit 0
+                fi
+        done
+
+
+tr -d '\r' < parse15.txt > SalesOrder.txt
+
+###FILE TRANSFORMATION. 
+###Column arrangement name separated by '~' in the transformation. 
+# ITEM_NAME,	
+# ORGANIZATION_CODE,	
+# PRIMARY_UOM_QUANTITY,	
+# COMPLETED_QUANTITY,	
+# REQUIREMENT_DATE DATE,	
+# SALES_ORDER_NUMBER,	
+# LINE_NUM,	
+# SR_INSTANCE_CODE,	
+# RESERVATION_TYPE,	
+# RESERVATION_QUANTITY,	
+# SUBINVENTORY,	
+# DEMAND_CLASS,	
+# SALESREP_CONTACT,	
+# ORDERED_ITEM_NAME,
+# CUSTOMER_NAME,	
+# SHIP_TO_SITE_CODE,
+# BILL_TO_SITE_CODE,
+# PLANNING_GROUP,	
+# DEMAND_PRIORITY,	
+# REQUEST_DATE DATE,	
+# SELLING_PRICE,	
+# DEMAND_VISIBLE,	
+# FORECAST_VISIBLE,	
+# CTO_FLAG,
+# ORIGINAL_SYSTEM_REFERENCE,	
+# ORIGINAL_SYSTEM_LINE_REFERENCE,	
+# DELETED_FLAG,
+# COMPANY_NAME,
+# Comments,	
+# Order_Release_Number,	
+# End_Order_Number, 	
+# End_Order_Release_Number, 	
+# End_Order_Line_Number,  	
+# END_ORDER_TYPE,	
+# NEW_ORDER_PLACEMENT_DATE,
+# ORIGINAL_ITEM_NAME,
+# DEMAND_SOURCE_TYPE,
+# ORDER_DATE_TYPE_CODE,
+# SCHEDULE_ARRIVAL_DATE DATE,
+# LATEST_ACCEPTABLE_DATE DATE,
+# SHIPPING_METHOD_CODE,
+# PROMISE_DATE,
+# ORG_FIRM_FLAG,
+# SHIP_SET_NAME,
+# ARRIVAL_SET_NAME,
+# SOURCE_DEMAND_SOURCE_HEADER_ID,
+# SOURCE_ORGANIZATION_ID,
+# SOURCE_ORIGINAL_ITEM_ID,
+# SOURCE_DEMAND_ID,
+# SOURCE_INVENTORY_ITEM_ID,
+# SOURCE_CUSTOMER_ID,
+# SOURCE_BILL_TO_SITE_USE_ID,
+# SOURCE_SHIP_TO_SITE_USE_ID,
+# SOURCE_DEMAND_SOURCE_LINE,
+# PROJECT_NUMBER,
+# TASK_NUMBER,
+# REVISED_DMD_DATE,
+# REVISED_DMD_PRIORITY,
+# AVAILABLE_TO_MRP,
+# SR_INSTANCE_ID CONSTANT,
+# PROCESS_FLAG CONSTANT,
+# DATA_SOURCE_TYPE CONSTANT,
+# LAST_UPDATE_LOGIN CONSTANT,
+# LAST_UPDATE_DATE SYSDATE,
+# CREATION_DATE SYSDATE
+
+cat SalesOrder.txt | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~EBS~1~~"$8"~~"$9"~~"$10"~~~~"$13"~"$14"~"$15"~Y~Y~~~~~~~~~~~~"$16"~~2~~"$17"~"$18"~"$19"~"$20"~~~~~~~~~~~~~"$21"~"$22"~"$23"~"$24"~~~~~~~"}' >> parse_SALES_ORDERS.dat
+#cat parse1.txt > XXNBTY_ON_HAND_DATA.dat
+
+cat parse_SALES_ORDERS.dat | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > MSC_ST_SALES_ORDERS.dat
+
+unix2dos MSC_ST_SALES_ORDERS.dat
+
+chmod 777 MSC_ST_SALES_ORDERS.dat
+#creating back up file
+cat MSC_ST_SALES_ORDERS.dat > MSC_ST_SALES_ORDERS_BCK_$v_date.dat
+
+#Archiving Original flat file and enriched flat file
+mv MSC_ST_SALES_ORDERS_BCK* $fileArch
+mv $SALESORDER* $fileArch
+
+#moving transformed flat file to the ASCP Directory
+mv MSC_ST_SALES_ORDERS.dat /home/nbtydata/dataupload
+
+## Deletion of temporary files in the temp directory
+cd $SALESORDERTempDIR
+rm -f parse*
+rm -f XXNBTY_SALES*
+rm -f Sales_order*
+rm -f SalesOrde*

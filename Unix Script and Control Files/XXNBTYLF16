@@ -1,0 +1,271 @@
+#!/bin/bash
+
+
+####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF16_WIP_DEMAND.sh																			
+#	Author's Name: Erwin Ramos																						
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF16																								
+#	Description: Unix script for LF16-WIP Component Demand.															
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Erwin Ramos		Initial Development													
+#																													
+#																													
+####################################################################################################################
+
+## SET VARIABLE
+home="/home/nbtydata";
+tempDIR="/home/nbtydata/incoming";
+WIPDEMAND="XXNBTY_DEMAND_WORK_ORDER";
+DEMANDWIPTempDIR=$XXNBTY_TOP/data/tmp;
+DEMANDBackUp="/home/nbtydata/VCP_RICEFW/archive/WIP_COMP_BCK";
+DEMANDBackUpOrig='/home/nbtydata/VCP_RICEFW/archive/WIP_ORIG_FLATFILE_BCK';
+dataUploadDIR="/home/nbtydata/dataupload"
+fileArch=$XXNBTY_TOP/data/in/arch;
+v_date=`date "+%Y-%m-%d_%H:%M"`;
+
+## Deletion of temporary files in the temp directory
+cd $DEMANDWIPTempDIR
+
+rm -f parse*
+rm -f XXNBTY_DEMAND_WORK_ORDER*
+rm -f Work*
+rm -f Demand*
+
+## Moving of flat file into temporary directory for transformation.
+cd $tempDIR 
+mv $WIPDEMAND* $DEMANDWIPTempDIR
+
+## Archiving of Original flat file. 
+cd $DEMANDWIPTempDIR
+#cp $WIPDEMAND* $fileArch
+
+cat $WIPDEMAND* > Demand_WO.txt
+
+## Pre-validation checking of columns of the flat file. 
+
+		N=0
+        cat Demand_WO.txt | while read LINE1; do
+                N1=$((N1+1))
+                c1=`echo $LINE1 | awk -F '~' '{print $1}'`;
+
+                if [ $c1 =  ]; then
+                        echo $LINE1 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse1.txt
+                else
+                        echo $LINE1 >> parse1.txt
+                continue
+                        exit 0
+                fi
+        done
+
+
+        cat parse1.txt | while read LINE2; do
+                N2=$((N2+1))
+                c2=`echo $LINE2 | awk -F '~' '{print $2}'`;
+
+                if [ $c2 =  ]; then
+                        echo $LINE2 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse2.txt
+                else
+                        echo $LINE2 >> parse2.txt
+                continue
+                        exit 0
+                fi
+        done
+
+
+        cat parse2.txt | while read LINE3; do
+                N3=$((N3+1))
+                c3=`echo $LINE3 | awk -F '~' '{print $3}'`;
+
+                if [ $c3 =  ]; then
+                        echo $LINE3 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse3.txt
+                else
+                        echo $LINE3 >> parse3.txt
+                continue
+                fi
+        done
+
+
+        cat parse3.txt | while read LINE4; do
+                N4=$((N4+1))
+                c4=`echo $LINE4 | awk -F '~' '{print $4}'`;
+
+                if [ $c4 =  ]; then
+                        echo $LINE4 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse4.txt
+                else
+                        echo $LINE4 >> parse4.txt
+                continue
+                fi
+        done
+
+        cat parse4.txt | while read LINE5; do
+                N5=$((N5+1))
+                c5=`echo $LINE5 | awk -F '~' '{print $5}'`;
+
+                if [ $c5 =  ]; then
+                        echo $LINE5 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse5.txt
+                else
+
+                        echo $LINE5 >> parse5.txt
+
+                continue
+                fi
+        done
+
+        cat parse5.txt | while read LINE6; do
+                N6=$((N6+1))
+
+                c6=`echo $LINE6 | awk -F '~' '{print $6}'`;
+
+                if [ $c6 =  ]; then
+                        echo $LINE6 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse6.txt
+                else
+                        echo $LINE6 >> parse6.txt
+
+                continue
+                fi
+
+        done
+
+        cat parse6.txt | while read LINE7; do
+                N7=$((N7+1))
+				
+                c7=`echo $LINE7 | awk -F '~' '{print $7}'`;
+
+                if [ $c7 =  ]; then
+                        echo $LINE7 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse7.txt
+                else
+                        echo $LINE7 >> parse7.txt
+
+                continue
+                fi
+
+        done
+
+        cat parse7.txt | while read LINE8; do
+                N8=$((N8+1))
+				
+                c8=`echo $LINE8 | awk -F '~' '{print $8}'`;
+
+                if [ $c8 =  ]; then
+                        echo $LINE8 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse8.txt
+                else
+                        echo $LINE8 >> parse8.txt
+
+                continue
+                fi
+
+        done	
+		
+        cat parse8.txt | while read LINE9; do
+                N9=$((N9+1))
+				
+                c9=`echo $LINE9 | awk -F '~' '{print $9}'`;
+
+                if [ $c9 =  ]; then
+                        echo $LINE9 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse9.txt
+                else
+                        echo $LINE9 >> parse9.txt
+
+                continue
+                fi
+
+        done		
+
+        cat parse9.txt | while read LINE10; do
+                N10=$((N10+1))
+				
+                c10=`echo $LINE8 | awk -F '~' '{print $10}'`;
+
+                if [ $c10 =  ]; then
+                        echo $LINE10 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6"~"$7"~"$8"~"$9"~"$10}' >> parse10.txt
+                else
+                        echo $LINE10 >> parse10.txt
+
+                continue
+                fi
+
+        done
+		
+
+tr -d '\r' < parse10.txt > WorkOrder.txt
+		
+## Flat file transformation based on control file mapping. 
+## Sequence of columns in the transformation separated by tilde (~): 
+# ITEM_NAME,	
+# ORGANIZATION_CODE,	
+# USING_REQUIREMENT_QUANTITY,	
+# WIP_ENTITY_NAME,	
+# USING_ASSEMBLY_DEMAND_DATE,	
+# SR_INSTANCE_CODE,	
+# USING_ASSEMBLY_ITEM_NAME,	
+# OPERATION_SEQ_CODE,	
+# ORIGINATION_TYPE,
+# PROJECT_NUMBER,	
+# TASK_NUMBER	,
+# PLANNING_GROUP,	
+# END_ITEM_UNIT_NUMBER,	
+# DEMAND_CLASS,	
+# ORDER_NUMBER,	
+# WIP_STATUS_CODE,
+# WIP_SUPPLY_TYPE,
+# DELETED_FLAG,
+# COMPANY_NAME,
+# ROUTING_NAME,
+# ALTERNATE_ROUTING_DESIGNATOR,
+# OPERATION_EFFECTIVITY_DATE DATE,
+# QUANTITY_PER_ASSEMBLY,
+# QUANTITY_ISSUED,
+# SOURCE_ORG_ID,
+# SOURCE_INVENTORY_ITEM_ID,
+# SOURCE_USING_ASSEMBLY_ITEM_ID,
+# SOURCE_WIP_ENTITY_ID,
+# SOURCE_PROJECT_ID,
+# SOURCE_TASK_ID,
+# COMPONENT_SCALING_TYPE,
+# COMPONENT_YIELD_FACTOR,
+# DEMAND_TYPE CONSTANT, 
+# SR_INSTANCE_ID CONSTANT,
+# PROCESS_FLAG CONSTANT,
+# DATA_SOURCE_TYPE CONSTANT,
+# LAST_UPDATE_LOGIN CONSTANT,
+# LAST_UPDATE_DATE SYSDATE,
+# CREATION_DATE SYSDATE
+
+#cat WorkOrder.txt | awk -F '~' '{print $1"~"$2"~~~~~~"$3"~~~~~~~~"$4"~~2~~"$5"~~"$6"~~"$7"~~"$8"~~"$9"~~"$10"~~~~~~~~~"}' >> parse_DEMANDS_WO.dat
+cat WorkOrder.txt | awk -F '~' '{print $1"~"$2"~"$4"~"$6"~"$3"~EBS~"$9"~"$7"~~~~~~~~"$8"~~~~"$10"~~~~~~~~~~~~~~~~~~~"}' >> parse_DEMANDS_WO.dat
+
+#cat parse1.txt > XXNBTY_ON_HAND_DATA.dat
+
+cat parse_DEMANDS_WO.dat | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > MSC_ST_DEMANDS_WORK_ORDER.dat
+
+
+## Converting the enriched flat file from unix to dos format. 
+
+unix2dos MSC_ST_DEMANDS_WORK_ORDER.dat
+
+chmod 777 MSC_ST_DEMANDS_WORK_ORDER.dat
+
+## creating back up file for enriched file
+cat MSC_ST_DEMANDS_WORK_ORDER.dat > MSC_ST_DEMANDS_WORK_ORDER_BCK_$v_date.dat
+
+#Archiving Original flat file and enriched flat file
+mv MSC_ST_DEMANDS_WORK_ORDER_BCK* $fileArch
+mv $WIPDEMAND* $fileArch
+
+## moving enriched flat file to the ASCP Directory
+mv MSC_ST_DEMANDS_WORK_ORDER.dat $dataUploadDIR
+
+## Deletion of temporary files in the temp directory
+cd $DEMANDWIPTempDIR
+
+rm -f parse*
+rm -f XXNBTY_DEMAND_WORK_ORDER*
+rm -f Work*
+rm -f Demand*

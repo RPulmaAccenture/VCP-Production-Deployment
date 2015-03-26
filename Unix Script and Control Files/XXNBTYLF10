@@ -1,0 +1,207 @@
+#!/bin/bash
+
+#####################################################################################################################
+#																													
+#	Script Name: XXNBTY_LF10_ON_HAND.sh																				
+#	Author's Name: Erwin Ramos																						
+#	Date written: 06-Oct-2014																						
+#	RICEFW Object: LF10																								
+#	Description: Unix script for LF10-On Hand Supplies.																
+#	Program Style: 																									
+#																													
+#	Maintenance History:																							
+#																													
+#	Date			Issue#		Name			Remarks																
+#	-----------		------		-----------		------------------------------------------------					
+#	06-Oct-2014				 	Erwin Ramos		Initial Development													
+#																													
+#																														
+#####################################################################################################################
+
+
+## SET VARIABLE
+home="/home/nbtydata";
+incomingDIR="/home/nbtydata/incoming";
+dataUploadDIR="/home/nbtydata/dataupload";
+#OnHandBackUp="/home/nbtydata/VCP_RICEFW/archive/ONHAND_BCK";
+#OnHandBackUpOrig="/home/nbtydata/VCP_RICEFW/archive/ONHAND_ORIG_FLATFILE_BCK";
+ONHAND="XXNBTY_ON_HAND_DATA";
+OnHandTempDIR=$XXNBTY_TOP/data/tmp;
+fileArch=$XXNBTY_TOP/data/in/arch;
+v_date=`date "+%Y-%m-%d_%H:%M"`;
+
+## Deletion of temporary files in the temp directory
+cd $OnHandTempDIR
+rm -f parse*
+rm -f XXNBTY_ON_HAND_DATA*
+rm -f OnHand*
+
+## Moving of flat file into temporary directory for transformation.
+
+cd $incomingDIR
+mv $ONHAND* $OnHandTempDIR
+
+## Archiving of Original flat file. 
+cd $OnHandTempDIR
+#cp $ONHAND* $fileArch
+
+
+cat $ONHAND* > OnHand_File.txt
+
+#tr -d '\r' < OnHand_File.txt > OnHand_File.txt
+
+
+## Pre-validation checking of columns of the flat file. 
+N=0
+###COLUMN 1 VALIDATION
+	cat OnHand_File.txt | while read LINE1; do
+        	N1=$((N1+1))
+		c1=`echo $LINE1 | awk -F '~' '{print $1}'`;
+#
+       		if [ $c1 =  ]; then
+                	echo $LINE1 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse1.txt
+        	else
+                	echo $LINE1 >> parse1.txt
+       	 	continue
+                	exit 0
+        	fi
+	done
+
+###COLUMN 2 VALIDATION
+	cat parse1.txt | while read LINE2; do
+        	N2=$((N2+1))
+        	c2=`echo $LINE2 | awk -F '~' '{print $2}'`;
+
+        	if [ $c2 =  ]; then
+                	echo $LINE2 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse2.txt
+        	else
+                	echo $LINE2 >> parse2.txt
+        	continue
+                	exit 0
+        	fi
+	done
+
+
+###COLUMN 3 VALIDATION
+	cat parse2.txt | while read LINE3; do
+       		N3=$((N3+1))
+        	c3=`echo $LINE3 | awk -F '~' '{print $3}'`;
+
+        	if [ $c3 =  ]; then
+                	echo $LINE3 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse3.txt
+        	else
+                	echo $LINE3 >> parse3.txt
+        	continue
+        	fi
+	done
+
+#####COLUMN 4 VALIDATION
+	cat parse3.txt | while read LINE4; do
+        	N4=$((N4+1))
+        	c4=`echo $LINE4 | awk -F '~' '{print $4}'`;
+#
+        	if [ $c4 =  ]; then
+                	echo $LINE4 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse4.txt
+        	else
+                	echo $LINE4 >> parse4.txt
+        	continue
+        	fi
+	done
+
+
+#######COLUMN 5 VALIDATION
+	cat parse4.txt | while read LINE5; do
+		N5=$((N5+1))
+
+		c5=`echo $LINE5 | awk -F '~' '{print $5}'`;
+
+		if [ $c5 =  ]; then
+			echo $LINE5 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse5.txt
+		else 
+
+			echo $LINE5 >> parse5.txt
+
+		continue
+		fi
+	done
+N=0
+#cat parse1.txt
+	rm parse4.txt
+
+	cat parse5.txt | while read LINE6; do
+       		N6=$((N6+1))
+		c6=`echo $LINE6 | awk -F '~' '{print $6}'`;
+
+		if [ $c6 =  ]; then
+		        echo $LINE6 | awk -F '~' '{print $1"~"$2"~"$3"~"$4"~"$5"~"$6}' >> parse6.txt
+        	else
+        		echo $LINE6 >> parse6.txt
+
+ 	      	continue
+        	fi
+
+	done
+
+tr -d '\r' < parse6.txt > OnHand.txt
+## Flat file transformation based on control file mapping. 
+## Sequence of columns in the transformation separated by tilde (~): 
+# ITEM_NAME,
+# ORGANIZATION_CODE,
+# UNIT_NUMBER,
+# NEW_ORDER_QUANTITY,
+# FIRM_PLANNED_TYPE,
+# SR_INSTANCE_CODE,
+# PROJECT_NUMBER,
+# TASK_NUMBER,
+# PLANNING_GROUP,
+# SUBINVENTORY_CODE,
+# LOT_NUMBER,
+# EXPIRATION_DATE DATE,
+# DELETED_FLAG,
+# COMPANY_NAME,
+# VMI_FLAG,
+# SOURCE_ORG_ID,
+# SOURCE_INVENTORY_ITEM_ID,
+# SOURCE_PROJECT_ID,
+# SOURCE_TASK_ID,
+# SOURCE_SR_MTL_SUPPLY_ID,
+# SOURCE_DISPOSITION_ID,
+# PLANNING_PARTNER_SITE_CODE,
+# PLANNING_TP_TYPE,
+# OWNING_PARTNER_SITE_CODE,
+# OWNING_TP_TYPE,
+# SR_CUSTOMER_ACCT_ID,
+# ORDER_TYPE CONSTANT,
+# SR_INSTANCE_ID CONSTANT,
+# PROCESS_FLAG CONSTANT,
+# DATA_SOURCE_TYPE CONSTANT,
+# LAST_UPDATE_LOGIN CONSTANT,
+# LAST_UPDATE_DATE SYSDATE,
+# CREATION_DATE SYSDATE
+
+cat OnHand.txt | awk -F '~' '{print $1"~"$2"~~"$3"~~EBS~~~~"$4"~"$5"~"$6"~2~~~~~~~~~"$2"~2~"$2"~2~~~~~~~~"}' >> parse_ONHAND.dat
+#cat OnHand_File.txt | awk -F '~' '{print $1"~"$2"~~"$3"~~~~~~"$4"~"$5"~"$6"~2~~~~~~~~~~~~"}' >> MSC_ST_SUPPLIES_ONHAND.dat
+
+cat parse_ONHAND.dat | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' | sed 's/ ~/~/' > MSC_ST_SUPPLIES_ONHAND.dat
+
+## Converting the enriched flat file from unix to dos format. 
+unix2dos MSC_ST_SUPPLIES_ONHAND.dat
+
+chmod 777 MSC_ST_SUPPLIES_ONHAND.dat
+
+## creating back up file for enriched file
+cat MSC_ST_SUPPLIES_ONHAND.dat > MSC_ST_SUPPLIES_ONHAND_BCK_$v_date.dat
+
+#Archiving Original flat file and enriched flat file
+mv MSC_ST_SUPPLIES_ONHAND_BCK* $fileArch
+mv $ONHAND* $fileArch
+
+## moving enriched flat file to the ASCP Directory
+mv MSC_ST_SUPPLIES_ONHAND.dat $dataUploadDIR
+
+## Deletion of temporary files in the temp directory
+cd $OnHandTempDIR
+rm -f parse*
+rm -f XXNBTY_ON_HAND_DATA*
+rm -f OnHand*
+
